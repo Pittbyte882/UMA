@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { PageHeader } from "@/components/shared/section-heading"
@@ -30,7 +30,7 @@ import {
   CheckCircle,
   Calendar as CalendarIcon,
 } from "lucide-react"
-import { mockAvailability } from "@/lib/mock-data"
+import { supabase } from "@/lib/supabase"
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 const MONTHS = [
@@ -50,6 +50,18 @@ const lessonTypes = [
   { value: "60", label: "60-Minute Lesson" },
 ]
 
+type Availability = {
+  day_of_week: number
+  start_time: string
+  end_time: string
+  is_active: boolean
+}
+
+type BookedSlot = {
+  date: string
+  time: string
+}
+
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -58,11 +70,36 @@ export default function CalendarPage() {
   const [showBookingDialog, setShowBookingDialog] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isBooked, setIsBooked] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [availability, setAvailability] = useState<Availability[]>([])
+  const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([])
   const [bookingForm, setBookingForm] = useState({
     name: "",
     email: "",
     phone: "",
   })
+
+  // Load availability from Supabase
+  useEffect(() => {
+    const loadAvailability = async () => {
+      const { data } = await supabase
+        .from("availability")
+        .select("*")
+        .eq("is_active", true)
+      if (data) setAvailability(data)
+    }
+
+    const loadBookedSlots = async () => {
+      const { data } = await supabase
+        .from("bookings")
+        .select("date, time")
+        .in("status", ["pending", "confirmed"])
+      if (data) setBookedSlots(data)
+    }
+
+    loadAvailability()
+    loadBookedSlots()
+  }, [])
 
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear()
@@ -73,17 +110,12 @@ export default function CalendarPage() {
     const startingDay = firstDay.getDay()
 
     const days: (Date | null)[] = []
-    
-    // Add empty slots for days before the first day of the month
     for (let i = 0; i < startingDay; i++) {
       days.push(null)
     }
-    
-    // Add all days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(new Date(year, month, i))
     }
-
     return days
   }, [currentDate])
 
@@ -91,30 +123,28 @@ export default function CalendarPage() {
     const dayOfWeek = date.getDay()
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
     if (date < today) return false
-    
-    return mockAvailability.some(
-      (a) => a.day_of_week === dayOfWeek && a.is_active
-    )
+    return availability.some((a) => a.day_of_week === dayOfWeek && a.is_active)
+  }
+
+  const isSlotBooked = (date: Date, time: string) => {
+    const dateStr = date.toISOString().split("T")[0]
+    return bookedSlots.some((s) => s.date === dateStr && s.time === time)
   }
 
   const getAvailableSlots = (date: Date) => {
     const dayOfWeek = date.getDay()
-    const availability = mockAvailability.find(
-      (a) => a.day_of_week === dayOfWeek && a.is_active
-    )
-    
-    if (!availability) return []
+    const avail = availability.find((a) => a.day_of_week === dayOfWeek && a.is_active)
+    if (!avail) return []
 
-    const startHour = parseInt(availability.start_time.split(":")[0])
-    const endHour = parseInt(availability.end_time.split(":")[0])
-    
+    const startHour = parseInt(avail.start_time.split(":")[0])
+    const endHour = parseInt(avail.end_time.split(":")[0])
+
     return timeSlots.filter((slot) => {
       const hour = parseInt(slot.split(":")[0])
       const isPM = slot.includes("PM") && hour !== 12
       const hour24 = isPM ? hour + 12 : (hour === 12 && slot.includes("AM") ? 0 : hour)
-      return hour24 >= startHour && hour24 < endHour
+      return hour24 >= startHour && hour24 < endHour && !isSlotBooked(date, slot)
     })
   }
 
@@ -145,12 +175,59 @@ export default function CalendarPage() {
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError(null)
 
-    // Simulate booking - replace with actual Supabase integration
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const dateStr = selectedDate!.toISOString().split("T")[0]
 
-    setIsSubmitting(false)
-    setIsBooked(true)
+      // Save to Supabase
+      const { error: supabaseError } = await supabase
+        .from("bookings")
+        .insert([
+          {
+            name: bookingForm.name,
+            email: bookingForm.email,
+            phone: bookingForm.phone,
+            date: dateStr,
+            time: selectedTime,
+            lesson_type: lessonTypes.find((t) => t.value === lessonType)?.label,
+            status: "pending",
+          },
+        ])
+
+      if (supabaseError) throw supabaseError
+
+      // Send confirmation emails
+      await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...bookingForm,
+          date: selectedDate!.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          }),
+          time: selectedTime,
+          lessonType: lessonTypes.find((t) => t.value === lessonType)?.label,
+        }),
+      })
+
+      // Refresh booked slots
+      const { data } = await supabase
+        .from("bookings")
+        .select("date, time")
+        .in("status", ["pending", "confirmed"])
+      if (data) setBookedSlots(data)
+
+      setIsBooked(true)
+    } catch (err) {
+      console.error(err)
+      setError("Something went wrong. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleBookingFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,7 +286,6 @@ export default function CalendarPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4">
-                    {/* Day headers */}
                     <div className="grid grid-cols-7 mb-2">
                       {DAYS.map((day) => (
                         <div
@@ -220,17 +296,15 @@ export default function CalendarPage() {
                         </div>
                       ))}
                     </div>
-                    {/* Calendar grid */}
                     <div className="grid grid-cols-7 gap-1">
                       {calendarDays.map((date, index) => {
                         if (!date) {
                           return <div key={`empty-${index}`} className="p-2" />
                         }
-                        
                         const isAvailable = isDateAvailable(date)
                         const isSelected = selectedDate?.toDateString() === date.toDateString()
                         const isToday = new Date().toDateString() === date.toDateString()
-                        
+
                         return (
                           <button
                             key={date.toISOString()}
@@ -238,20 +312,20 @@ export default function CalendarPage() {
                             disabled={!isAvailable}
                             className={`
                               p-2 rounded-lg text-sm font-medium transition-all
-                              ${isAvailable 
-                                ? "hover:bg-champagne-gold/20 cursor-pointer" 
+                              ${isAvailable
+                                ? "hover:bg-champagne-gold/20 cursor-pointer"
                                 : "text-gray-300 cursor-not-allowed"
                               }
-                              ${isSelected 
-                                ? "bg-rose-gold text-white hover:bg-rose-gold" 
+                              ${isSelected
+                                ? "bg-rose-gold text-white hover:bg-rose-gold"
                                 : ""
                               }
-                              ${isToday && !isSelected 
-                                ? "ring-2 ring-champagne-gold" 
+                              ${isToday && !isSelected
+                                ? "ring-2 ring-champagne-gold"
                                 : ""
                               }
-                              ${isAvailable && !isSelected 
-                                ? "text-espresso" 
+                              ${isAvailable && !isSelected
+                                ? "text-espresso"
                                 : ""
                               }
                             `}
@@ -271,13 +345,11 @@ export default function CalendarPage() {
                   <CardHeader className="border-b border-blush-pink/30">
                     <CardTitle className="font-serif text-xl text-espresso">
                       {selectedDate ? (
-                        <>
-                          {selectedDate.toLocaleDateString("en-US", {
-                            weekday: "long",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </>
+                        selectedDate.toLocaleDateString("en-US", {
+                          weekday: "long",
+                          month: "long",
+                          day: "numeric",
+                        })
                       ) : (
                         "Select a Date"
                       )}
@@ -303,7 +375,7 @@ export default function CalendarPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        
+
                         <Label className="text-espresso mb-2 block">
                           Available Times
                         </Label>
@@ -368,7 +440,6 @@ export default function CalendarPage() {
 
         <WavyDivider variant="gradient" />
 
-        {/* Info Section */}
         <section className="py-16 bg-blush-pink/20">
           <div className="container mx-auto px-4 text-center">
             <h3 className="font-serif text-2xl text-espresso mb-4">
@@ -400,8 +471,11 @@ export default function CalendarPage() {
                   })}{" "}
                   at {selectedTime}.
                 </DialogDescription>
-                <p className="text-sm text-warm-taupe mb-6">
-                  A confirmation email has been sent to {bookingForm.email}.
+                <p className="text-sm text-warm-taupe mb-2">
+                  A confirmation email has been sent to {bookingForm.email} with payment instructions.
+                </p>
+                <p className="text-sm font-medium text-rose-gold mb-6">
+                  Please submit payment within 24 hours to secure your spot.
                 </p>
                 <Button
                   onClick={resetBooking}
@@ -422,10 +496,17 @@ export default function CalendarPage() {
                       month: "long",
                       day: "numeric",
                     })}{" "}
-                    at {selectedTime} -{" "}
+                    at {selectedTime} —{" "}
                     {lessonTypes.find((t) => t.value === lessonType)?.label}
                   </DialogDescription>
                 </DialogHeader>
+
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                    {error}
+                  </div>
+                )}
+
                 <form onSubmit={handleBookingSubmit} className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label htmlFor="booking-name">Full Name *</Label>

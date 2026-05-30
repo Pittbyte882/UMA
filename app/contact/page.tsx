@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react"
 import Image from "next/image"
+import { supabase } from "@/lib/supabase"
 
 const contactInfo = [
   {
@@ -43,6 +44,7 @@ const contactInfo = [
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,13 +55,38 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError(null)
 
-    // Simulate form submission - replace with actual Resend integration
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Save to Supabase
+      const { error: supabaseError } = await supabase
+        .from("contact_submissions")
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message,
+          },
+        ])
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setFormData({ name: "", email: "", phone: "", message: "" })
+      if (supabaseError) throw supabaseError
+
+      // Send email notification
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      setIsSubmitted(true)
+      setFormData({ name: "", email: "", phone: "", message: "" })
+    } catch (err) {
+      console.error(err)
+      setError("Something went wrong. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -81,18 +108,19 @@ export default function ContactPage() {
         />
 
         <section className="py-20 md:py-28 relative overflow-hidden">
-            <div className="absolute inset-0 z-0">
-              <Image
-                src="/images/Marble_Back.png"
-                alt=""
-                fill
-                className="object-cover object-center"
-                priority
-              />
-              <div className="absolute inset-0 bg-pearl-white/40" />
-            </div>
-            <div className="container mx-auto px-4 relative z-10">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/Marble_Back.png"
+              alt=""
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            <div className="absolute inset-0 bg-pearl-white/40" />
+          </div>
+          <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+
               {/* Contact Form */}
               <div>
                 <h2 className="font-serif text-2xl md:text-3xl text-espresso mb-6">
@@ -121,6 +149,12 @@ export default function ContactPage() {
                   </Card>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    {error && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                        {error}
+                      </div>
+                    )}
+
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-espresso">
@@ -243,7 +277,6 @@ export default function ContactPage() {
                   ))}
                 </div>
 
-                {/* FAQ Teaser */}
                 <Card className="mt-8 bg-gradient-to-br from-champagne-gold/10 to-rose-gold/10 border-champagne-gold/30">
                   <CardContent className="p-6">
                     <h3 className="font-serif text-xl text-espresso mb-2">
@@ -268,7 +301,6 @@ export default function ContactPage() {
 
         <WavyDivider variant="gradient" />
 
-        {/* Map Placeholder */}
         <section className="py-16 bg-blush-pink/20">
           <div className="container mx-auto px-4 text-center">
             <h3 className="font-serif text-2xl text-espresso mb-4">

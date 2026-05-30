@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select"
 import { Calendar, CheckCircle, Gift, Clock, MessageCircle } from "lucide-react"
 import { MarbleAccent } from "@/components/shared/marble-accent"
+import { supabase } from "@/lib/supabase"
 
 const benefits = [
   {
@@ -42,6 +43,7 @@ const benefits = [
 export default function ConsultationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,12 +57,38 @@ export default function ConsultationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setError(null)
 
-    // Simulate form submission - replace with actual Supabase/Resend integration
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      // Save to Supabase
+      const { error: supabaseError } = await supabase
+        .from("consultation_requests")
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            message: `Student Type: ${formData.studentType} | Experience: ${formData.experienceLevel} | Preferred Date: ${formData.preferredDate} | Goals: ${formData.goals}`,
+            status: "pending",
+          },
+        ])
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+      if (supabaseError) throw supabaseError
+
+      // Send email notification via our API route
+      await fetch("/api/consultation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      setIsSubmitted(true)
+    } catch (err) {
+      console.error(err)
+      setError("Something went wrong. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -89,7 +117,6 @@ export default function ConsultationPage() {
         />
 
         <section className="py-20 md:py-28 relative overflow-hidden">
-          {/* Flowing marble accent across the background */}
           <MarbleAccent variant="blob-center" size="xl" opacity={0.15} />
           <div className="container mx-auto px-4 relative z-10">
             {/* Benefits */}
@@ -134,8 +161,14 @@ export default function ConsultationPage() {
                     <h2 className="font-serif text-2xl text-espresso mb-6 text-center">
                       Request Your Consultation
                     </h2>
+
+                    {error && (
+                      <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                        {error}
+                      </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      {/* Basic Info */}
                       <div className="grid sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-espresso">
@@ -183,7 +216,6 @@ export default function ConsultationPage() {
                         />
                       </div>
 
-                      {/* Student Type */}
                       <div className="space-y-3">
                         <Label className="text-espresso">
                           Who is the student? *
@@ -214,15 +246,14 @@ export default function ConsultationPage() {
                             </Label>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="child" id="child" />
-                            <Label htmlFor="child" className="font-normal cursor-pointer">
+                            <RadioGroupItem value="group" id="group" />
+                            <Label htmlFor="group" className="font-normal cursor-pointer">
                               Group
                             </Label>
                           </div>
                         </RadioGroup>
                       </div>
 
-                      {/* Experience Level */}
                       <div className="space-y-2">
                         <Label htmlFor="experienceLevel" className="text-espresso">
                           Experience Level *
@@ -237,41 +268,29 @@ export default function ConsultationPage() {
                             <SelectValue placeholder="Select experience level" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="beginner">
-                              Complete Beginner
-                            </SelectItem>
-                            <SelectItem value="some-experience">
-                              Some Experience
-                            </SelectItem>
-                            <SelectItem value="intermediate">
-                              Intermediate
-                            </SelectItem>
-                            <SelectItem value="advanced">
-                              Advanced / Professional
-                            </SelectItem>
+                            <SelectItem value="beginner">Complete Beginner</SelectItem>
+                            <SelectItem value="some-experience">Some Experience</SelectItem>
+                            <SelectItem value="intermediate">Intermediate</SelectItem>
+                            <SelectItem value="advanced">Advanced / Professional</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
 
-                      {/* Preferred Date */}
                       <div className="space-y-2">
                         <Label htmlFor="preferredDate" className="text-espresso">
                           Preferred Consultation Date
                         </Label>
-                        <div className="relative">
-                          <Input
-                            id="preferredDate"
-                            name="preferredDate"
-                            type="date"
-                            value={formData.preferredDate}
-                            onChange={handleChange}
-                            className="border-blush-pink focus:border-rose-gold focus:ring-rose-gold"
-                            min={new Date().toISOString().split("T")[0]}
-                          />
-                        </div>
+                        <Input
+                          id="preferredDate"
+                          name="preferredDate"
+                          type="date"
+                          value={formData.preferredDate}
+                          onChange={handleChange}
+                          className="border-blush-pink focus:border-rose-gold focus:ring-rose-gold"
+                          min={new Date().toISOString().split("T")[0]}
+                        />
                       </div>
 
-                      {/* Goals */}
                       <div className="space-y-2">
                         <Label htmlFor="goals" className="text-espresso">
                           What are your vocal goals? *
@@ -313,7 +332,6 @@ export default function ConsultationPage() {
 
         <WavyDivider variant="gradient" />
 
-        {/* FAQ Section */}
         <section className="py-16 bg-blush-pink/20">
           <div className="container mx-auto px-4 text-center">
             <h3 className="font-serif text-2xl text-espresso mb-4">
