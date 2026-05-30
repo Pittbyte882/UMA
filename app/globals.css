@@ -1,0 +1,320 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Brand Colors - Ultimate Music Academy */
+  --rose-gold: #B76E79;
+  --champagne-gold: #D6B98C;
+  --blush-pink: #E8CFCF;
+  --pearl-white: #F9F6F2;
+  --warm-taupe: #8A776B;
+  --espresso: #3E312C;
+  
+  /* Theme using brand colors */
+  --background: #F9F6F2;
+  --foreground: #3E312C;
+  --card: #FFFFFF;
+  --card-foreground: #3E312C;
+  --popover: #FFFFFF;
+  --popover-foreground: #3E312C;
+  --primary: #B76E79;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8CFCF;
+  --secondary-foreground: #3E312C;
+  --muted: #F9F6F2;
+  --muted-foreground: #8A776B;
+  --accent: #D6B98C;
+  --accent-foreground: #3E312C;
+  --destructive: #dc2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E8CFCF;
+  --input: #E8CFCF;
+  --ring: #B76E79;
+  --chart-1: #B76E79;
+  --chart-2: #D6B98C;
+  --chart-3: #8A776B;
+  --chart-4: #E8CFCF;
+  --chart-5: #3E312C;
+  --radius: 0.625rem;
+  --sidebar: #3E312C;
+  --sidebar-foreground: #F9F6F2;
+  --sidebar-primary: #B76E79;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #8A776B;
+  --sidebar-accent-foreground: #F9F6F2;
+  --sidebar-border: #8A776B;
+  --sidebar-ring: #B76E79;
+}
+
+.dark {
+  --background: #3E312C;
+  --foreground: #F9F6F2;
+  --card: #4a3d36;
+  --card-foreground: #F9F6F2;
+  --popover: #4a3d36;
+  --popover-foreground: #F9F6F2;
+  --primary: #B76E79;
+  --primary-foreground: #FFFFFF;
+  --secondary: #8A776B;
+  --secondary-foreground: #F9F6F2;
+  --muted: #4a3d36;
+  --muted-foreground: #D6B98C;
+  --accent: #D6B98C;
+  --accent-foreground: #3E312C;
+  --destructive: #dc2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #8A776B;
+  --input: #8A776B;
+  --ring: #B76E79;
+  --chart-1: #B76E79;
+  --chart-2: #D6B98C;
+  --chart-3: #E8CFCF;
+  --chart-4: #8A776B;
+  --chart-5: #F9F6F2;
+  --sidebar: #3E312C;
+  --sidebar-foreground: #F9F6F2;
+  --sidebar-primary: #B76E79;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #8A776B;
+  --sidebar-accent-foreground: #F9F6F2;
+  --sidebar-border: #8A776B;
+  --sidebar-ring: #B76E79;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans, 'Montserrat'), system-ui, sans-serif;
+  --font-serif: var(--font-serif, 'Playfair Display'), Georgia, serif;
+  --font-script: var(--font-script, 'Great Vibes'), cursive;
+  --font-mono: 'Geist Mono', monospace;
+  
+  /* Brand Colors */
+  --color-rose-gold: #B76E79;
+  --color-champagne-gold: #D6B98C;
+  --color-blush-pink: #E8CFCF;
+  --color-pearl-white: #F9F6F2;
+  --color-warm-taupe: #8A776B;
+  --color-espresso: #3E312C;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-pearl-white text-espresso;
+  }
+}
+
+/* Luxury gradient backgrounds */
+.gradient-section {
+  background-color: #F9F6F2;
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(232, 207, 207, 0.75), transparent 28%),
+    radial-gradient(circle at 95% 12%, rgba(232, 207, 207, 0.55), transparent 32%),
+    radial-gradient(circle at 8% 90%, rgba(183, 110, 121, 0.22), transparent 30%),
+    radial-gradient(circle at 92% 85%, rgba(214, 185, 140, 0.25), transparent 26%),
+    linear-gradient(135deg, rgba(249, 246, 242, 1), rgba(232, 207, 207, 0.25));
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(120deg, transparent 0%, rgba(183, 110, 121, 0.18) 48%, transparent 52%),
+    linear-gradient(140deg, transparent 0%, rgba(214, 185, 140, 0.25) 50%, transparent 53%);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Sparkle effect */
+.sparkle-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 85% 25%, rgba(255,255,255,0.85) 0 6px, transparent 7px),
+    radial-gradient(circle at 90% 38%, rgba(255,255,255,0.65) 0 10px, transparent 11px),
+    radial-gradient(circle at 78% 55%, rgba(255,255,255,0.45) 0 7px, transparent 8px),
+    radial-gradient(circle at 15% 70%, rgba(255,255,255,0.55) 0 5px, transparent 6px),
+    radial-gradient(circle at 25% 85%, rgba(255,255,255,0.45) 0 8px, transparent 9px);
+  pointer-events: none;
+}
+
+/* CTA Section gradient */
+.cta-gradient {
+  background: linear-gradient(135deg, rgba(232, 207, 207, 0.4) 0%, rgba(249, 246, 242, 0.9) 50%, rgba(214, 185, 140, 0.3) 100%);
+  position: relative;
+}
+
+/* Script font class */
+.font-script {
+  font-family: var(--font-script, 'Great Vibes'), cursive;
+}
+
+/* Heading styles */
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: var(--font-serif, 'Playfair Display'), Georgia, serif;
+}
+
+/* Body text */
+body, p, span, .font-sans {
+  font-family: var(--font-sans, 'Montserrat'), system-ui, sans-serif;
+}
+
+/* Rose gold button */
+.btn-rose-gold {
+  background-color: #B76E79;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-rose-gold:hover {
+  background-color: #a25d67;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(183, 110, 121, 0.3);
+}
+
+/* Outline button */
+.btn-outline-rose {
+  background-color: transparent;
+  border: 2px solid #B76E79;
+  color: #B76E79;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-rose:hover {
+  background-color: #B76E79;
+  color: white;
+}
+
+/* Decorative diamond */
+.diamond-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.diamond-divider::before,
+.diamond-divider::after {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #D6B98C, transparent);
+}
+
+.diamond {
+  width: 8px;
+  height: 8px;
+  background: #D6B98C;
+  transform: rotate(45deg);
+}
+
+/* Program card hover */
+.program-card {
+  transition: all 0.3s ease;
+}
+
+.program-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(183, 110, 121, 0.15);
+}
+
+/* Letter spacing for labels */
+.tracking-luxury {
+  letter-spacing: 0.15em;
+}
+
+/* Marble texture accent */
+.marble-accent {
+  position: relative;
+}
+
+.marble-accent::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  background-image: url('/images/marble-texture.jpg');
+  background-size: cover;
+  opacity: 0.35;
+  clip-path: polygon(0 40%, 60% 100%, 0 100%);
+  pointer-events: none;
+}
+
+/* Marble corner - top right variant */
+.marble-accent-tr::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background-image: url('/images/marble-texture.jpg');
+  background-size: cover;
+  opacity: 0.25;
+  clip-path: polygon(100% 0, 100% 60%, 40% 0);
+  pointer-events: none;
+}
+
+/* Sparkle overlay - standalone */
+.sparkle-overlay {
+  position: relative;
+}
+
+.sparkle-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 85% 25%, rgba(255,255,255,0.85) 0 6px, transparent 7px),
+    radial-gradient(circle at 90% 38%, rgba(255,255,255,0.65) 0 10px, transparent 11px),
+    radial-gradient(circle at 78% 55%, rgba(255,255,255,0.45) 0 7px, transparent 8px),
+    radial-gradient(circle at 15% 70%, rgba(255,255,255,0.55) 0 5px, transparent 6px),
+    radial-gradient(circle at 25% 85%, rgba(255,255,255,0.45) 0 8px, transparent 9px);
+  pointer-events: none;
+}
