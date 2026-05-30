@@ -4,24 +4,36 @@ import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Calendar, 
-  CalendarDays, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  FileText,
+  Calendar,
+  CalendarDays,
+  LogOut,
   Menu,
   X,
-  Home
+  Home,
+  Star,
+  MessageSquare,
+  BookOpen,
+  Settings,
+  Clock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Bookings", href: "/admin/bookings", icon: Calendar },
+  { name: "Availability", href: "/admin/availability", icon: Clock },
+  { name: "Calendar", href: "/admin/calendar", icon: CalendarDays },
+  { name: "Testimonials", href: "/admin/testimonials", icon: Star },
   { name: "Blog Posts", href: "/admin/blog", icon: FileText },
   { name: "Events", href: "/admin/events", icon: CalendarDays },
-  { name: "Calendar", href: "/admin/calendar", icon: Calendar },
+  { name: "Submissions", href: "/admin/submissions", icon: MessageSquare },
+  { name: "Books", href: "/admin/books", icon: BookOpen },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
 export default function AdminLayout({
@@ -34,42 +46,56 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [userEmail, setUserEmail] = useState("")
 
   useEffect(() => {
-    // Check authentication (replace with Supabase auth check)
-    const authStatus = localStorage.getItem("admin_authenticated")
-    if (!authStatus && pathname !== "/admin") {
-      router.push("/admin")
-    } else {
-      setIsAuthenticated(true)
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session && pathname !== "/admin/login") {
+        router.push("/admin/login")
+      } else if (session) {
+        setIsAuthenticated(true)
+        setUserEmail(session.user.email || "")
+      }
+      setIsLoading(false)
     }
-    setIsLoading(false)
+    checkAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session && pathname !== "/admin/login") {
+          router.push("/admin/login")
+        } else if (session) {
+          setIsAuthenticated(true)
+          setUserEmail(session.user.email || "")
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
   }, [pathname, router])
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_authenticated")
-    router.push("/admin")
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push("/admin/login")
   }
 
-  // Show login page without layout
-  if (pathname === "/admin") {
+  if (pathname === "/admin/login") {
     return <>{children}</>
   }
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-pearl-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-gold"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-gold" />
       </div>
     )
   }
 
-  if (!isAuthenticated) {
-    return null
-  }
+  if (!isAuthenticated) return null
 
   return (
-    <div className="min-h-screen bg-pearl-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -88,7 +114,7 @@ export default function AdminLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-warm-taupe/20">
-            <Link href="/admin/dashboard" className="flex items-center gap-3">
+            <Link href="/admin" className="flex items-center gap-3">
               <Image
                 src="/images/logo.png"
                 alt="Ultimate Music Academy"
@@ -96,7 +122,14 @@ export default function AdminLayout({
                 height={40}
                 className="h-10 w-10 object-contain"
               />
-              <span className="font-serif text-pearl-white text-lg">Admin</span>
+              <div>
+                <span className="font-serif text-pearl-white text-sm block">
+                  Admin
+                </span>
+                <span className="text-pearl-white/40 text-xs truncate max-w-[120px] block">
+                  {userEmail}
+                </span>
+              </div>
             </Link>
             <Button
               variant="ghost"
@@ -109,7 +142,7 @@ export default function AdminLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -118,13 +151,13 @@ export default function AdminLayout({
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm",
                     isActive
                       ? "bg-rose-gold text-pearl-white"
                       : "text-pearl-white/70 hover:bg-warm-taupe/20 hover:text-pearl-white"
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
                   <span>{item.name}</span>
                 </Link>
               )
@@ -132,19 +165,20 @@ export default function AdminLayout({
           </nav>
 
           {/* Bottom actions */}
-          <div className="p-4 border-t border-warm-taupe/20 space-y-2">
+          <div className="p-4 border-t border-warm-taupe/20 space-y-1">
             <Link
               href="/"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-pearl-white/70 hover:bg-warm-taupe/20 hover:text-pearl-white transition-colors"
+              target="_blank"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-pearl-white/70 hover:bg-warm-taupe/20 hover:text-pearl-white transition-colors text-sm"
             >
-              <Home className="h-5 w-5" />
+              <Home className="h-4 w-4" />
               <span>View Site</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-pearl-white/70 hover:bg-warm-taupe/20 hover:text-pearl-white transition-colors w-full"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg text-pearl-white/70 hover:bg-warm-taupe/20 hover:text-pearl-white transition-colors w-full text-sm"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
             </button>
           </div>
@@ -154,7 +188,7 @@ export default function AdminLayout({
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-pearl-white border-b border-blush-pink">
+        <header className="sticky top-0 z-30 bg-white border-b border-blush-pink">
           <div className="flex items-center justify-between px-4 py-3">
             <Button
               variant="ghost"
@@ -168,8 +202,11 @@ export default function AdminLayout({
               <h1 className="font-serif text-xl text-espresso lg:hidden text-center">
                 Admin Portal
               </h1>
+              <h1 className="font-serif text-xl text-espresso hidden lg:block">
+                {navigation.find((n) => n.href === pathname)?.name || "Admin"}
+              </h1>
             </div>
-            <div className="w-10 lg:hidden" /> {/* Spacer for centering */}
+            <div className="w-10 lg:hidden" />
           </div>
         </header>
 

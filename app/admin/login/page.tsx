@@ -3,17 +3,19 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Lock, Mail } from "lucide-react"
+import { Loader2, Lock, Mail, Eye, EyeOff } from "lucide-react"
 
 export default function AdminLoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -22,16 +24,18 @@ export default function AdminLoginPage() {
     setError("")
     setLoading(true)
 
-    // Simulate login - replace with Supabase auth when connected
     try {
-      // Mock authentication check
-      if (email === "admin@ultimatemusicacademy.com" && password === "admin123") {
-        // Store auth state (replace with Supabase session)
-        localStorage.setItem("admin_authenticated", "true")
-        router.push("/admin/dashboard")
-      } else {
-        setError("Invalid email or password")
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (signInError) {
+        setError("Invalid email or password. Please try again.")
+        return
       }
+
+      router.push("/admin")
     } catch {
       setError("An error occurred. Please try again.")
     } finally {
@@ -63,18 +67,22 @@ export default function AdminLoginPage() {
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
               <Alert variant="destructive" className="border-rose-gold/50 bg-rose-gold/10">
-                <AlertDescription className="text-espresso">{error}</AlertDescription>
+                <AlertDescription className="text-espresso">
+                  {error}
+                </AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-espresso">Email</Label>
+              <Label htmlFor="email" className="text-espresso">
+                Email
+              </Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-taupe" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@ultimatemusicacademy.com"
+                  placeholder="Samantha@ultimatemusicacademy.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 border-blush-pink focus:border-rose-gold focus:ring-rose-gold"
@@ -84,18 +92,31 @@ export default function AdminLoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-espresso">Password</Label>
+              <Label htmlFor="password" className="text-espresso">
+                Password
+              </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-taupe" />
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 border-blush-pink focus:border-rose-gold focus:ring-rose-gold"
+                  className="pl-10 pr-10 border-blush-pink focus:border-rose-gold focus:ring-rose-gold"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-taupe hover:text-espresso"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -114,12 +135,6 @@ export default function AdminLoginPage() {
               )}
             </Button>
           </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-xs text-warm-taupe">
-              Demo credentials: admin@ultimatemusicacademy.com / admin123
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
