@@ -5,38 +5,42 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, studentType, experienceLevel, preferredDate, goals } = await req.json()
+    const { name, email, phone, message } = await req.json()
 
-    // Email to Samantha
+    // Email to Samantha with full questionnaire
     await resend.emails.send({
       from: "UMA <noreply@ultimatemusicacademy.com>",
       to: "Samantha@ultimatemusicacademy.com",
       subject: `New Consultation Request from ${name}`,
       html: `
-        <h2>New Consultation Request</h2>
+        <h2>New Consultation Questionnaire</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
-        <p><strong>Student Type:</strong> ${studentType}</p>
-        <p><strong>Experience Level:</strong> ${experienceLevel}</p>
-        <p><strong>Preferred Date:</strong> ${preferredDate || "Not specified"}</p>
-        <p><strong>Goals:</strong> ${goals}</p>
+        <hr/>
+        <h3>Full Questionnaire</h3>
+        ${message
+          .split(" | ")
+          .map((line: string) => `<p>${line.trim()}</p>`)
+          .join("")}
       `,
     })
 
-    // Confirmation email to client
+    // Confirmation email to student
     await resend.emails.send({
       from: "UMA <noreply@ultimatemusicacademy.com>",
       to: email,
       subject: "We received your consultation request!",
       html: `
         <h2>Hi ${name},</h2>
-        <p>Thank you for reaching out to Ultimate Music Academy!</p>
-        <p>We've received your consultation request and will be in touch within 24 hours to confirm your appointment.</p>
-        <p>We look forward to speaking with you!</p>
+        <p>Thank you for completing the Ultimate Music Academy vocal student questionnaire!</p>
+        <p>We've received your submission and will review your answers before reaching out within 24 hours to schedule your complimentary 15-minute consultation.</p>
+        <p>We're excited to learn more about you and your musical journey!</p>
         <br/>
         <p>Warm regards,</p>
         <p><strong>Samantha Nelson-Philipp</strong><br/>Ultimate Music Academy</p>
+        <p>📧 Samantha@ultimatemusicacademy.com</p>
+        <p>📞 (424) 230-2179</p>
       `,
     })
 
