@@ -22,7 +22,7 @@ const books = [
     title: "Unlocked",
     subtitle: "Giving You the Keys to Sing Like a Pro",
     description:
-      "Whether you're a beginner or a working vocalist, Unlocked walks you through the foundations of professional singing — vocal technique, artistry, confidence, and the mindset it takes to perform at your best. Written by Berklee-trained vocal coach Samantha Nelson-Philipp, this book is the guide every serious singer needs.",
+      "Whether you're a beginner or a working vocalist, Unlocked walks you through the foundations of professional singing — vocal technique, artistry, confidence, and the mindset it takes to perform at your best. Written by Berklee-trained vocal coach Samantha Nelson, this book is the guide every serious singer needs.",
     image: "/images/umaadultsbook.png",
     audience: "For Adult Singers & Vocalists",
     tagline: "Speak. Sing. Be Free.",
@@ -83,7 +83,7 @@ export default async function BooksPage() {
           />
           <div className="container mx-auto px-4 text-center">
             <p className="text-warm-taupe tracking-[0.3em] uppercase text-xs mb-4">
-              By Samantha Nelson-Philipp
+              By Samantha Nelson
             </p>
             <h1
               className="font-script mb-4"

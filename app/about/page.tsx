@@ -59,7 +59,7 @@ export default function AboutPage() {
                 {/* Bio */}
                 <div className="space-y-4 text-warm-taupe leading-relaxed text-sm md:text-base">
                   <p>
-                    Samantha Nelson-Philipp is a singer, songwriter, vocal coach, and creative
+                    Samantha Nelson is a singer, songwriter, vocal coach, and creative
                     visionary with a passion for helping artists unlock their full potential — both
                     on and off the stage.
                   </p>
@@ -129,7 +129,7 @@ export default function AboutPage() {
                       >
                         <Image
                           src="/images/samantha-about.png"
-                          alt="Samantha Nelson-Philipp"
+                          alt="Samantha Nelson"
                           fill
                           className="object-cover object-top"
                           priority
@@ -145,7 +145,7 @@ export default function AboutPage() {
                       style={{ background: "linear-gradient(90deg, transparent, #D6B98C, transparent)" }}
                     />
                     <p className="font-script text-3xl text-rose-gold">
-                      Samantha Nelson-Philipp
+                      Samantha Nelson
                     </p>
                     <p
                       className="uppercase text-xs mt-1"
@@ -179,7 +179,7 @@ export default function AboutPage() {
             <div className="relative aspect-[3/4] max-w-md mx-auto">
               <Image
                 src="/images/samantha-about.png"
-                alt="Samantha Nelson-Philipp"
+                alt="Samantha Nelson"
                 fill
                 className="object-contain"
               />

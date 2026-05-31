@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         <p>📞 (424) 230-2179</p>
         <br/>
         <p>We look forward to your lesson!</p>
-        <p><strong>Samantha Nelson-Philipp</strong><br/>Ultimate Music Academy</p>
+        <p><strong>Samantha Nelson</strong><br/>Ultimate Music Academy</p>
       `,
     })
 

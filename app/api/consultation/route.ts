@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         <p>We're excited to learn more about you and your musical journey!</p>
         <br/>
         <p>Warm regards,</p>
-        <p><strong>Samantha Nelson-Philipp</strong><br/>Ultimate Music Academy</p>
+        <p><strong>Samantha Nelson</strong><br/>Ultimate Music Academy</p>
         <p>📧 Samantha@ultimatemusicacademy.com</p>
         <p>📞 (424) 230-2179</p>
       `,

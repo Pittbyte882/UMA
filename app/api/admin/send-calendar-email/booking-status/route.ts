@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         ${messages[status] || ""}
         <br/>
         <p>Warm regards,</p>
-        <p><strong>Samantha Nelson-Philipp</strong><br/>Ultimate Music Academy</p>
+        <p><strong>Samantha Nelson</strong><br/>Ultimate Music Academy</p>
         <p>📞 (424) 230-2179</p>
       `,
     })

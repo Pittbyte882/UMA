@@ -58,7 +58,7 @@ const faqs = [
       },
       {
         q: "What makes UMA different from other vocal programs?",
-        a: "UMA combines professional-level vocal training with mentorship, confidence building, artistry development, and real-world industry insight. Students learn through our signature Wake • Build • Shine™ method — Wake to warm up and strengthen the voice, Build to develop technique, artistry, and mindset, and Shine to perform with confidence and authenticity. Students also benefit from the Unlocked curriculum, created by UMA founder Samantha Nelson-Philipp. At UMA, we focus on developing the whole artist — not just the voice.",
+        a: "UMA combines professional-level vocal training with mentorship, confidence building, artistry development, and real-world industry insight. Students learn through our signature Wake • Build • Shine™ method — Wake to warm up and strengthen the voice, Build to develop technique, artistry, and mindset, and Shine to perform with confidence and authenticity. Students also benefit from the Unlocked curriculum, created by UMA founder Samantha Nelson. At UMA, we focus on developing the whole artist — not just the voice.",
       },
       {
         q: "Is the Unlocked book included with lessons?",
@@ -66,7 +66,7 @@ const faqs = [
       },
       {
         q: "Do you teach students who want to sing professionally?",
-        a: "Yes! Founder Samantha Nelson-Philipp brings years of professional industry experience as a singer, songwriter, session vocalist, and published songwriter. Students interested in pursuing music professionally may receive guidance in auditions, studio recording, live performance, background and session singing, artist development, stage presence, and music industry professionalism. That said, students do not need professional aspirations to enroll. UMA is equally committed to serving students who simply love music and want to grow in confidence and skill.",
+        a: "Yes! Founder Samantha Nelson brings years of professional industry experience as a singer, songwriter, session vocalist, and published songwriter. Students interested in pursuing music professionally may receive guidance in auditions, studio recording, live performance, background and session singing, artist development, stage presence, and music industry professionalism. That said, students do not need professional aspirations to enroll. UMA is equally committed to serving students who simply love music and want to grow in confidence and skill.",
       },
     ],
   },
@@ -88,7 +88,7 @@ const faqs = [
       },
       {
         q: "Is UMA a record label?",
-        a: "No. Ultimate Music Academy is a vocal training and artist development academy — not a record label, management company, or talent agency. While students benefit from Samantha Nelson-Philipp's professional music industry experience and mentorship, enrollment at UMA does not guarantee recording contracts, management representation, or employment opportunities. Our mission is to educate, equip, and empower artists at every stage of their journey.",
+        a: "No. Ultimate Music Academy is a vocal training and artist development academy — not a record label, management company, or talent agency. While students benefit from Samantha Nelson's professional music industry experience and mentorship, enrollment at UMA does not guarantee recording contracts, management representation, or employment opportunities. Our mission is to educate, equip, and empower artists at every stage of their journey.",
       },
     ],
   },

@@ -39,7 +39,7 @@ export function AboutPreview() {
             </h2>
             <p className="text-warm-taupe text-base md:text-lg mb-6 leading-relaxed">
               Founded by Berklee College of Music graduate and professional vocalist 
-              Samantha Nelson-Philipp, UMA helps singers of all ages develop strong technique, 
+              Samantha Nelson, UMA helps singers of all ages develop strong technique, 
               confidence, artistry, and stage presence in a supportive and empowering environment.
             </p>
             <Button

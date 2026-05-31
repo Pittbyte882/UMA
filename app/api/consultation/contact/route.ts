@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         <p>We've received your message and will get back to you within 24-48 hours.</p>
         <br/>
         <p>Warm regards,</p>
-        <p><strong>Samantha Nelson-Philipp</strong><br/>Ultimate Music Academy</p>
+        <p><strong>Samantha Nelson</strong><br/>Ultimate Music Academy</p>
       `,
     })
 
