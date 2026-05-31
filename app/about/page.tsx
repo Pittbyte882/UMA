@@ -72,7 +72,7 @@ export default function AboutPage() {
                   </p>
                   <p>
                     In addition to performing, Samantha is also a published songwriter with
-                    Universal Music Publishing Group, where she has developed music for
+                    <strong>Universal Music Publishing Group</strong>, where she has developed music for
                     major artists and projects across multiple genres.
                   </p>
                   <p>
