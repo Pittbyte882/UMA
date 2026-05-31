@@ -20,7 +20,7 @@ const programs = [
     id: "3",
     title: "Adults (19+)",
     subtitle: "Professional & personal growth.",
-    image: "/images/adults.png",
+    image: "/images/Adults.png",
   },
 ]
 
