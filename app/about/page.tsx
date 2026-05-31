@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function AboutPage() {
   return (
@@ -50,14 +50,14 @@ export default function AboutPage() {
                   <h1 className="font-script text-6xl md:text-7xl lg:text-8xl text-rose-gold mb-4">
                     Samantha
                   </h1>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center  ml-2">
                     <div className="h-px bg-gradient-to-r from-rose-gold to-champagne-gold flex-1 max-w-md" />
                     <span className="text-champagne-gold text-lg">&#10022;</span>
                   </div>
                 </div>
 
                 {/* Bio */}
-                <div className="space-y-4 text-warm-taupe leading-relaxed text-sm md:text-base">
+                <div className="space-y-4 text-warm-taupe leading-relaxed text-sm md:text-base mb-8">
                   <p>
                     Samantha Nelson is a singer, songwriter, vocal coach, and creative
                     visionary with a passion for helping artists unlock their full potential — both
@@ -97,19 +97,25 @@ export default function AboutPage() {
                 </div>
 
                 {/* CTA */}
-                <div className="mt-10">
-                  <Link
-                    href="/consultation"
-                    className="inline-flex items-center gap-2 bg-rose-gold hover:bg-rose-gold/90 text-white px-8 py-4 tracking-wider uppercase text-sm font-medium transition-all group"
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    asChild
+                    className="btn-rose-gold rounded-md font-medium px-6 py-5 uppercase tracking-luxury text-xs"
                   >
-                    Book a Consultation
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                    <Link href="/consultation">Book a Consultation →</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="btn-rose-gold rounded-md font-medium px-6 py-5 uppercase tracking-luxury text-xs"
+                  >
+                    <Link href="/videos">Videos of Samantha</Link>
+                  </Button>
                 </div>
-              </div>
+
+              </div>{/* end content card */}
 
               {/* Samantha photo — circular framed, centered */}
-              <div className="relative hidden lg:flex items-center justify-center h-full"  style={{ marginTop: "-40px" }}>
+              <div className="relative hidden lg:flex items-center justify-center h-full" style={{ marginTop: "-40px" }}>
                 <div className="relative flex flex-col items-center gap-6">
 
                   {/* Outer gold ring */}
