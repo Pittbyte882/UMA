@@ -25,15 +25,15 @@ export function Header() {
   return (
     <header className="absolute top-0 left-0 right-0 z-50 w-full">
       <div className="container mx-auto px-4">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-24 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
               src="/images/logo.png"
               alt="Ultimate Music Academy"
-              width={70}
-              height={70}
-              className="h-[70px] w-[70px] object-contain bg-transparent "
+              width={140}
+              height={140}
+              className="h-[140px] w-[140px] object-contain bg-transparent"
             />
           </Link>
 
@@ -43,9 +43,9 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-4 py-2 text-sm font-medium uppercase tracking-luxury transition-colors ${
-                  index === 0 
-                    ? "text-rose-gold" 
+                className={`px-3 py-2 text-xs font-medium uppercase tracking-luxury transition-colors ${
+                  index === 0
+                    ? "text-rose-gold"
                     : "text-espresso hover:text-rose-gold"
                 }`}
               >
@@ -78,9 +78,9 @@ export function Header() {
                   <Image
                     src="/images/logo.png"
                     alt="Ultimate Music Academy"
-                    width={80}
-                    height={80}
-                    className="h-20 w-20 object-contain"
+                    width={120}
+                    height={120}
+                    className="h-28 w-28 object-contain"
                   />
                 </Link>
                 <nav className="flex flex-col gap-1">
@@ -90,8 +90,8 @@ export function Header() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={`px-4 py-3 text-sm font-medium uppercase tracking-luxury rounded-lg transition-colors ${
-                        index === 0 
-                          ? "text-rose-gold bg-blush-pink/30" 
+                        index === 0
+                          ? "text-rose-gold bg-blush-pink/30"
                           : "text-espresso hover:text-rose-gold hover:bg-blush-pink/30"
                       }`}
                     >

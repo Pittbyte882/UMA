@@ -38,9 +38,9 @@ export function Footer() {
               <Image
                 src="/images/logo.png"
                 alt="Ultimate Music Academy"
-                width={60}
-                height={60}
-                className="h-14 w-14 object-contain"
+                width={100}
+                height={100}
+                className="h-24 w-24 object-contain"
               />
             </Link>
             <h3 className="font-serif text-xl text-pearl-white mb-2">
