@@ -8,6 +8,7 @@ import { MarbleAccent } from "@/components/shared/marble-accent"
 import { Card, CardContent } from "@/components/ui/card"
 import { Quote, Star } from "lucide-react"
 import { mockTestimonials } from "@/lib/mock-data"
+import { TestimonialForm } from "@/components/sections/testimonial-form"
 
 
 
@@ -65,7 +66,25 @@ export default function TestimonialsPage() {
             </div>
           </div>
         </section>
-
+          {/* Submit a Testimonial */}
+          <section className="py-20 md:py-28 bg-pearl-white">
+            <div className="container mx-auto px-4">
+              <div className="max-w-2xl mx-auto">
+                <div className="text-center mb-10">
+                  <p className="text-rose-gold font-medium tracking-wider uppercase text-sm mb-4">
+                    Share Your Experience
+                  </p>
+                  <h2 className="font-serif text-3xl md:text-4xl text-espresso mb-4">
+                    Submit a Testimonial
+                  </h2>
+                  <p className="text-warm-taupe">
+                    We'd love to hear about your experience at Ultimate Music Academy.
+                  </p>
+                </div>
+                <TestimonialForm />
+              </div>
+            </div>
+          </section>
         <WavyDivider variant="gradient" />
 
         {/* All Testimonials Grid */}
