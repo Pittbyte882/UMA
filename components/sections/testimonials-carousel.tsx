@@ -28,16 +28,9 @@ export function TestimonialsCarousel() {
   return (
     <section className="py-20 md:py-28 bg-espresso relative overflow-hidden">
       {/* Decorative circle elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-rose-gold/10 blur-3xl" />
-      <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-champagne-gold/10 blur-3xl" />
       
-      {/* Decorative circle photos */}
-      <div className="absolute top-20 right-20 w-16 h-16 rounded-full overflow-hidden opacity-20 hidden xl:block">
-        <Image src="/images/mc.jpg" alt="" fill className="object-cover" />
-      </div>
-      <div className="absolute bottom-20 left-20 w-20 h-20 rounded-full overflow-hidden opacity-20 hidden xl:block">
-        <Image src="/images/steph.jpg" alt="" fill className="object-cover" />
-      </div>
+      
+      
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
