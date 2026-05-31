@@ -67,7 +67,7 @@ const programOptions = [
       "Recital participation",
       "Completion certificate",
     ],
-    duration: "Weekly lessons for 16 weeks",
+    duration: "Weekly lessons for 14 weeks",
   },
   {
     title: "Gospel Choir Add-on",
