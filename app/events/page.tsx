@@ -18,7 +18,7 @@ const upcomingEvents = [
     title: "December Showcase",
     description:
       "Join us for our annual Ultimate Recital featuring performances by students of all ages and levels. A celebration of growth, dedication, and the joy of music. Light refreshments will be served.",
-    date: "TBD",
+    date: "December 5, 2026",
     endTime: "TBD",
     location: "TBD",
     type: "Recital",
