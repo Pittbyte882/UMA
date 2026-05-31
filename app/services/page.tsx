@@ -13,7 +13,7 @@ import { Clock, Users, Check } from "lucide-react"
 import { mockServices } from "@/lib/mock-data"
 
 const serviceImages: Record<string, string> = {
-  "1": "/images/services/private-lessons.jpg",
+  "1": "/images/home.png",
   "2": "/images/services/youth-program.jpg",
   "3": "/images/services/teen-training.jpg",
   "4": "/images/services/adult-development.png",
