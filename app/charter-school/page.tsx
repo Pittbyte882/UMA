@@ -60,7 +60,7 @@ const programOptions = [
   {
     title: "Semester Program",
     description:
-      "Structured 16-week program with clear goals, assessments, and a culminating recital.",
+      "Structured 14-week program with clear goals, assessments, and a culminating recital.",
     features: [
       "Semester syllabus",
       "Mid-term & final assessments",
@@ -70,16 +70,16 @@ const programOptions = [
     duration: "Weekly lessons for 16 weeks",
   },
   {
-    title: "Music Theory Add-On",
+    title: "Gospel Choir Add-on",
     description:
-      "Complement vocal lessons with music theory instruction for a well-rounded music education.",
+      "Complement vocal lessons with gospel music instruction for a well-rounded music education.",
     features: [
       "Reading sheet music",
       "Music notation",
       "Ear training",
       "Written assignments",
     ],
-    duration: "15-minute add-on",
+    duration: "90-minute add-on",
   },
 ]
 
