@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     // Email to Samantha
     await resend.emails.send({
       from: "UMA <noreply@ultimatemusicacademy.com>",
-      to: "Samantha@ultimatemusicacademy.com",
+      to: "info@ultimatemusicacademy.com",
       subject: `New Contact Message from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
