@@ -9,8 +9,22 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Quote, Star } from "lucide-react"
 import { mockTestimonials } from "@/lib/mock-data"
 import { TestimonialForm } from "@/components/sections/testimonial-form"
+import { supabase } from "@/lib/supabase"
 
-export default function TestimonialsPage() {
+export const revalidate = 0
+
+export default async function TestimonialsPage() {
+  const { data: approvedTestimonials } = await supabase
+    .from("testimonials")
+    .select("*")
+    .eq("is_approved", true)
+    .order("created_at", { ascending: false })
+
+  const displayTestimonials =
+    approvedTestimonials && approvedTestimonials.length > 0
+      ? approvedTestimonials
+      : mockTestimonials
+
   return (
     <div className="min-h-screen bg-pearl-white">
       <Header />
@@ -72,7 +86,7 @@ export default function TestimonialsPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {mockTestimonials.map((testimonial, index) => (
+              {displayTestimonials.map((testimonial, index) => (
                 <Card
                   key={testimonial.id}
                   className={`border-none shadow-lg hover:shadow-xl transition-shadow bg-white ${
@@ -82,13 +96,21 @@ export default function TestimonialsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-14 h-14 rounded-full overflow-hidden ring-2 ring-champagne-gold/30">
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          width={56}
-                          height={56}
-                          className="w-full h-full object-cover"
-                        />
+                        {testimonial.image ? (
+                          <Image
+                            src={testimonial.image}
+                            alt={testimonial.name}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-blush-pink/30 flex items-center justify-center">
+                            <span className="text-rose-gold font-serif text-xl">
+                              {testimonial.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div>
                         <p className="font-serif text-lg text-espresso">{testimonial.name}</p>
@@ -150,19 +172,19 @@ export default function TestimonialsPage() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {[1, 2, 3].map((_, index) => (
-              <div
-                key={index}
-                className="aspect-video rounded-2xl overflow-hidden relative"
-              >
-                <Image
-                  src="/images/events/coming-soon.svg"
-                  alt="Coming Soon"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ))}
+              {[1, 2, 3].map((_, index) => (
+                <div
+                  key={index}
+                  className="aspect-video rounded-2xl overflow-hidden relative"
+                >
+                  <Image
+                    src="/images/events/coming-soon.svg"
+                    alt="Coming Soon"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </section>
