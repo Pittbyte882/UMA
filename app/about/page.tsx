@@ -67,8 +67,8 @@ export default function AboutPage() {
                     A graduate of Berklee College of Music, Samantha has spent years working
                     professionally throughout the music industry as a session singer, background
                     vocalist, songwriter, and creative collaborator. Her career has included work
-                    with artists such as Demi Lovato, Kanye West, Kirk Franklin, Keith Urban,
-                    Tyler, the Creator, Deborah Cox, Sean Kingston, and Duran Duran, among others.
+                    with artists such as <strong>Demi Lovato, Kanye West, Kirk Franklin, Keith Urban,
+                    Tyler, the Creator, Deborah Cox, Sean Kingston, and Duran Duran</strong>, among others.
                   </p>
                   <p>
                     In addition to performing, Samantha is also a published songwriter with
