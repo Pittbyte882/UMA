@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -46,7 +46,6 @@ export default function AdminSettingsPage() {
     setIsChangingPassword(true)
 
     try {
-      // Verify current password by re-authenticating
       const { data: { user } } = await supabase.auth.getUser()
       if (!user?.email) throw new Error("Not authenticated")
 
@@ -61,7 +60,6 @@ export default function AdminSettingsPage() {
         return
       }
 
-      // Update password
       const { error: updateError } = await supabase.auth.updateUser({
         password: passwords.newPassword,
       })
@@ -111,7 +109,6 @@ export default function AdminSettingsPage() {
           )}
 
           <form onSubmit={handlePasswordChange} className="space-y-4">
-            {/* Current Password */}
             <div className="space-y-2">
               <Label className="text-espresso">Current Password</Label>
               <div className="relative">
@@ -130,16 +127,11 @@ export default function AdminSettingsPage() {
                   onClick={() => setShowCurrent(!showCurrent)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-taupe hover:text-espresso"
                 >
-                  {showCurrent ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            {/* New Password */}
             <div className="space-y-2">
               <Label className="text-espresso">New Password</Label>
               <div className="relative">
@@ -158,19 +150,12 @@ export default function AdminSettingsPage() {
                   onClick={() => setShowNew(!showNew)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-taupe hover:text-espresso"
                 >
-                  {showNew ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-xs text-warm-taupe">
-                Minimum 8 characters
-              </p>
+              <p className="text-xs text-warm-taupe">Minimum 8 characters</p>
             </div>
 
-            {/* Confirm Password */}
             <div className="space-y-2">
               <Label className="text-espresso">Confirm New Password</Label>
               <div className="relative">
@@ -189,11 +174,7 @@ export default function AdminSettingsPage() {
                   onClick={() => setShowConfirm(!showConfirm)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-taupe hover:text-espresso"
                 >
-                  {showConfirm ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {passwords.confirm && passwords.newPassword !== passwords.confirm && (
@@ -227,9 +208,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div>
               <p className="text-sm font-medium text-espresso">Email</p>
-              <p className="text-sm text-warm-taupe">
-                Samantha@ultimatemusicacademy.com
-              </p>
+              <p className="text-sm text-warm-taupe">samantha@ultimatemusicacademy.com</p>
             </div>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -241,9 +220,7 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div>
               <p className="text-sm font-medium text-espresso">Academy</p>
-              <p className="text-sm text-warm-taupe">
-                Ultimate Music Academy
-              </p>
+              <p className="text-sm text-warm-taupe">Ultimate Music Academy</p>
             </div>
           </div>
         </CardContent>
@@ -275,29 +252,17 @@ export default function AdminSettingsPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
-                <p className="text-sm font-medium text-espresso">
-                  Standard Payment Window
-                </p>
-                <p className="text-xs text-warm-taupe">
-                  Time allowed to pay before slot is released
-                </p>
+                <p className="text-sm font-medium text-espresso">Standard Payment Window</p>
+                <p className="text-xs text-warm-taupe">Time allowed to pay before slot is released</p>
               </div>
-              <span className="text-sm font-medium text-rose-gold">
-                24 hours
-              </span>
+              <span className="text-sm font-medium text-rose-gold">24 hours</span>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
-                <p className="text-sm font-medium text-espresso">
-                  Next-Day Payment Window
-                </p>
-                <p className="text-xs text-warm-taupe">
-                  If lesson is tomorrow, payment required within
-                </p>
+                <p className="text-sm font-medium text-espresso">Next-Day Payment Window</p>
+                <p className="text-xs text-warm-taupe">If lesson is tomorrow, payment required within</p>
               </div>
-              <span className="text-sm font-medium text-rose-gold">
-                1 hour
-              </span>
+              <span className="text-sm font-medium text-rose-gold">1 hour</span>
             </div>
           </div>
           <p className="text-xs text-warm-taupe mt-4">
@@ -318,6 +283,24 @@ function PaymentHandles() {
   })
   const [isSaving, setIsSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const loadHandles = async () => {
+      const { data } = await supabase
+        .from("admin_settings")
+        .select("key, value")
+        .in("key", ["payment_venmo", "payment_cashapp", "payment_zelle", "payment_paypal"])
+
+      if (data) {
+        const loaded: Record<string, string> = {}
+        data.forEach((s) => {
+          loaded[s.key.replace("payment_", "")] = s.value || ""
+        })
+        setHandles((prev) => ({ ...prev, ...loaded }))
+      }
+    }
+    loadHandles()
+  }, [])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -346,9 +329,7 @@ function PaymentHandles() {
           <Label className="text-espresso">Venmo</Label>
           <Input
             value={handles.venmo}
-            onChange={(e) =>
-              setHandles((p) => ({ ...p, venmo: e.target.value }))
-            }
+            onChange={(e) => setHandles((p) => ({ ...p, venmo: e.target.value }))}
             placeholder="@username"
             className="border-blush-pink"
           />
@@ -357,9 +338,7 @@ function PaymentHandles() {
           <Label className="text-espresso">CashApp</Label>
           <Input
             value={handles.cashapp}
-            onChange={(e) =>
-              setHandles((p) => ({ ...p, cashapp: e.target.value }))
-            }
+            onChange={(e) => setHandles((p) => ({ ...p, cashapp: e.target.value }))}
             placeholder="$username"
             className="border-blush-pink"
           />
@@ -368,9 +347,7 @@ function PaymentHandles() {
           <Label className="text-espresso">Zelle</Label>
           <Input
             value={handles.zelle}
-            onChange={(e) =>
-              setHandles((p) => ({ ...p, zelle: e.target.value }))
-            }
+            onChange={(e) => setHandles((p) => ({ ...p, zelle: e.target.value }))}
             placeholder="Phone or email"
             className="border-blush-pink"
           />
@@ -379,9 +356,7 @@ function PaymentHandles() {
           <Label className="text-espresso">PayPal</Label>
           <Input
             value={handles.paypal}
-            onChange={(e) =>
-              setHandles((p) => ({ ...p, paypal: e.target.value }))
-            }
+            onChange={(e) => setHandles((p) => ({ ...p, paypal: e.target.value }))}
             placeholder="Email or link"
             className="border-blush-pink"
           />
