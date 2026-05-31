@@ -15,47 +15,37 @@ import { mockEvents } from "@/lib/mock-data"
 const upcomingEvents = [
   {
     id: "1",
-    title: "Spring Recital 2024",
+    title: "December Showcase",
     description:
-      "Join us for our annual spring recital featuring performances by students of all ages and levels. A celebration of growth, dedication, and the joy of music. Light refreshments will be served.",
-    date: "2024-05-15T18:00:00Z",
-    endTime: "20:00",
-    location: "The Grand Concert Hall, 123 Music Lane, Downtown",
+      "Join us for our annual Ultimate Recital featuring performances by students of all ages and levels. A celebration of growth, dedication, and the joy of music. Light refreshments will be served.",
+    date: "TBD",
+    endTime: "TBD",
+    location: "TBD",
     type: "Recital",
-    image: "/images/events/recital.jpg",
+    image: "/images/events/recital.png",
   },
   {
     id: "2",
     title: "Summer Vocal Workshop",
     description:
       "An intensive 3-day workshop focusing on breath control, stage presence, and performance techniques. Perfect for intermediate to advanced students looking to take their skills to the next level.",
-    date: "2024-07-20T09:00:00Z",
-    endTime: "16:00",
+    date: "TBD",
+    endTime: "TBD",
     location: "Ultimate Music Academy Studio",
     type: "Workshop",
-    image: "/images/about-studio.jpg",
+    image: "/images/events/coming-soon.svg",
   },
+  
   {
     id: "3",
-    title: "Masterclass: Musical Theatre",
-    description:
-      "Special guest instructor from Broadway joins Samantha for an exclusive masterclass on musical theatre performance techniques. Limited spots available.",
-    date: "2024-08-10T14:00:00Z",
-    endTime: "17:00",
-    location: "Community Arts Center, 456 Arts Boulevard",
-    type: "Masterclass",
-    image: "/images/hero-bg.jpg",
-  },
-  {
-    id: "4",
     title: "Fall Open House",
     description:
       "Explore Ultimate Music Academy! Tour our studio, meet Samantha, and learn about our programs. Free mini-lessons available for new students.",
-    date: "2024-09-08T11:00:00Z",
-    endTime: "15:00",
+    date: "TBD",
+    endTime: "TBD",
     location: "Ultimate Music Academy Studio",
     type: "Open House",
-    image: "/images/samantha-portrait.jpg",
+    image: "/images/events/coming-soon.svg",
   },
 ]
 
@@ -107,12 +97,12 @@ export default function EventsPage() {
 
             <Card className="overflow-hidden border-none shadow-xl">
               <div className="grid lg:grid-cols-2">
-                <div className="relative h-64 lg:h-auto">
+                <div className="relative h-64 lg:h-auto min-h-[500px]" style={{ background: "#fdf6f0" }}>
                   <Image
                     src={upcomingEvents[0].image}
                     alt={upcomingEvents[0].title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                   <div className="absolute top-4 left-4">
                     <Badge className={eventTypeColors[upcomingEvents[0].type]}>
@@ -239,52 +229,42 @@ export default function EventsPage() {
         <WavyDivider variant="champagne" flip />
 
         {/* Past Events */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <p className="text-rose-gold font-medium tracking-wider uppercase text-sm mb-4">
-                Memories
-              </p>
-              <h2 className="font-serif text-3xl md:text-4xl text-espresso mb-4 text-balance">
-                Past Event Highlights
-              </h2>
-              <p className="text-warm-taupe text-lg max-w-2xl mx-auto">
-                A glimpse into the magical moments from our previous events.
-              </p>
-            </div>
+              <section className="py-20 md:py-28">
+                <div className="container mx-auto px-4">
+                  <div className="text-center mb-16">
+                    <p className="text-rose-gold font-medium tracking-wider uppercase text-sm mb-4">
+                      Memories
+                    </p>
+                    <h2 className="font-serif text-3xl md:text-4xl text-espresso mb-4 text-balance">
+                      Past Event Highlights
+                    </h2>
+                    <p className="text-warm-taupe text-lg max-w-2xl mx-auto">
+                      A glimpse into the magical moments from our previous events.
+                    </p>
+                  </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
-                <div
-                  key={index}
-                  className={`relative overflow-hidden group cursor-pointer ${
-                    index === 0 || index === 3
-                      ? "aspect-square"
-                      : index === 1
-                      ? "aspect-[4/3]"
-                      : "aspect-[3/4]"
-                  } ${index < 2 ? "rounded-tl-2xl" : ""} ${
-                    index === 2 || index === 3 ? "rounded-tr-2xl" : ""
-                  } rounded-lg`}
-                >
-                  <Image
-                    src={
-                      index % 3 === 0
-                        ? "/images/events/recital.jpg"
-                        : index % 3 === 1
-                        ? "/images/about-studio.jpg"
-                        : "/images/hero-bg.jpg"
-                    }
-                    alt="Past event"
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/40 transition-colors" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      "/images/IMG_0054.jpeg",
+                      "/images/IMG_0055.jpeg",
+                      "/images/IMG_0056.jpeg",
+                    ].map((src, index) => (
+                      <div
+                        key={index}
+                        className="relative aspect-[4/3] overflow-hidden rounded-lg group cursor-pointer"
+                      >
+                        <Image
+                          src={src}
+                          alt="Past event"
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/40 transition-colors" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
+              </section>
 
         {/* Newsletter Section */}
         <section className="py-16 bg-espresso text-pearl-white">
