@@ -16,6 +16,7 @@ const navigation = [
   { name: "Student Life", href: "/testimonials" },
   { name: "Contact", href: "/contact" },
   { name: "FAQ", href: "/faq" },
+  { name: "Pricing", href: "/pricing" },
 ]
 
 export function Header() {
