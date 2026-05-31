@@ -6,6 +6,7 @@ import { ArrowRight, BookOpen, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
 
+export const revalidate = 0
 type BookData = {
   id: string
   title: string
