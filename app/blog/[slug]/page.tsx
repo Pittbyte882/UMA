@@ -266,7 +266,7 @@ export default async function BlogPostPage({
                         </div>
                       </div>
                       <p className="text-warm-taupe text-sm">
-                        With 15+ years of experience in vocal instruction,
+                        With 20+ years of experience in vocal instruction,
                         Samantha shares insights to help students of all levels
                         improve their singing.
                       </p>
