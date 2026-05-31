@@ -1,38 +1,39 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, Save, Loader2, Upload } from "lucide-react"
 
 export default function EditEventPage() {
   const router = useRouter()
   const params = useParams()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState({
     title: "",
     date: "",
     time: "",
     location: "",
     description: "",
+    image: "",
   })
 
   useEffect(() => {
     const loadEvent = async () => {
       const { data } = await supabase
-        .from("events")
-        .select("*")
-        .eq("id", params.id)
-        .single()
-
+        .from("events").select("*").eq("id", params.id).single()
       if (data) {
         setFormData({
           title: data.title,
@@ -40,18 +41,40 @@ export default function EditEventPage() {
           time: data.time || "",
           location: data.location || "",
           description: data.description || "",
+          image: data.image || "",
         })
+        if (data.image) setImagePreview(data.image)
       }
       setIsLoading(false)
     }
     loadEvent()
   }, [params.id])
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingImage(true)
+    try {
+      const fileExt = file.name.split(".").pop()
+      const fileName = `${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage
+        .from("event-images").upload(fileName, file)
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage
+        .from("event-images").getPublicUrl(fileName)
+      setFormData((p) => ({ ...p, image: publicUrl }))
+      setImagePreview(publicUrl)
+    } catch (error) {
+      console.error("Error uploading image:", error)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
     setError(null)
-
     try {
       const { error: supabaseError } = await supabase
         .from("events")
@@ -61,9 +84,9 @@ export default function EditEventPage() {
           date: formData.date,
           time: formData.time || null,
           location: formData.location || null,
+          image: formData.image || null,
         })
         .eq("id", params.id)
-
       if (supabaseError) throw supabaseError
       router.push("/admin/events")
     } catch (err) {
@@ -99,96 +122,92 @@ export default function EditEventPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card className="border-blush-pink/50">
           <CardHeader>
-            <CardTitle className="font-serif text-lg text-espresso">
-              Event Details
-            </CardTitle>
+            <CardTitle className="font-serif text-lg text-espresso">Event Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                {error}
-              </div>
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>
             )}
 
             <div className="space-y-2">
               <Label className="text-espresso">Title *</Label>
-              <Input
-                value={formData.title}
+              <Input value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="border-blush-pink"
-                required
-              />
+                className="border-blush-pink" required />
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-espresso">Date *</Label>
-                <Input
-                  type="date"
-                  value={formData.date}
+                <Input type="date" value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="border-blush-pink"
-                  required
-                />
+                  className="border-blush-pink" required />
               </div>
               <div className="space-y-2">
                 <Label className="text-espresso">Time</Label>
-                <Input
-                  type="time"
-                  value={formData.time}
+                <Input type="time" value={formData.time}
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                  className="border-blush-pink"
-                />
+                  className="border-blush-pink" />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label className="text-espresso">Location</Label>
-              <Input
-                value={formData.location}
+              <Input value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="border-blush-pink"
-              />
+                className="border-blush-pink" />
             </div>
 
             <div className="space-y-2">
               <Label className="text-espresso">Description</Label>
-              <Textarea
-                value={formData.description}
+              <Textarea value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={5}
-                className="border-blush-pink resize-none"
-              />
+                rows={5} className="border-blush-pink resize-none" />
+            </div>
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label className="text-espresso">Event Image</Label>
+              <div
+                className="border-2 border-dashed border-blush-pink rounded-xl p-4 text-center cursor-pointer hover:border-rose-gold transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {imagePreview ? (
+                  <div className="space-y-2">
+                    <div className="relative w-full h-40 rounded-lg overflow-hidden">
+                      <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                    </div>
+                    <p className="text-xs text-warm-taupe">Click to change image</p>
+                  </div>
+                ) : (
+                  <div className="py-4">
+                    {uploadingImage ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-rose-gold" />
+                        <span className="text-sm text-warm-taupe">Uploading...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="w-10 h-10 text-blush-pink mx-auto mb-2" />
+                        <p className="text-sm text-warm-taupe">Click to upload an event image</p>
+                        <p className="text-xs text-warm-taupe/60 mt-1">JPG, PNG up to 10MB</p>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
             </div>
           </CardContent>
         </Card>
 
         <div className="flex gap-3">
           <Link href="/admin/events" className="flex-1">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-espresso text-espresso"
-            >
-              Cancel
-            </Button>
+            <Button type="button" variant="outline" className="w-full border-espresso text-espresso">Cancel</Button>
           </Link>
-          <Button
-            type="submit"
-            disabled={isSaving}
-            className="flex-1 bg-rose-gold hover:bg-rose-gold/90 text-white gap-2"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Save Changes
-              </>
-            )}
+          <Button type="submit" disabled={isSaving}
+            className="flex-1 bg-rose-gold hover:bg-rose-gold/90 text-white gap-2">
+            {isSaving ? <><Loader2 className="w-4 h-4 animate-spin" />Saving...</> : <><Save className="w-4 h-4" />Save Changes</>}
           </Button>
         </div>
       </form>
