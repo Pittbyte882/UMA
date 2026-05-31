@@ -35,13 +35,13 @@ import { supabase } from "@/lib/supabase"
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "July", "August", "September", "October", "November", "December",
 ]
 
 const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
   "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
-  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM"
+  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM",
 ]
 
 const lessonTypes = [
@@ -72,6 +72,7 @@ export default function CalendarPage() {
   const [isBooked, setIsBooked] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [availability, setAvailability] = useState<Availability[]>([])
+  const [overrides, setOverrides] = useState<any[]>([])
   const [bookedSlots, setBookedSlots] = useState<BookedSlot[]>([])
   const [bookingForm, setBookingForm] = useState({
     name: "",
@@ -79,7 +80,6 @@ export default function CalendarPage() {
     phone: "",
   })
 
-  // Load availability from Supabase
   useEffect(() => {
     const loadAvailability = async () => {
       const { data } = await supabase
@@ -87,6 +87,13 @@ export default function CalendarPage() {
         .select("*")
         .eq("is_active", true)
       if (data) setAvailability(data)
+    }
+
+    const loadOverrides = async () => {
+      const { data } = await supabase
+        .from("availability_overrides")
+        .select("*")
+      if (data) setOverrides(data)
     }
 
     const loadBookedSlots = async () => {
@@ -98,47 +105,57 @@ export default function CalendarPage() {
     }
 
     loadAvailability()
+    loadOverrides()
     loadBookedSlots()
   }, [])
 
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const daysInMonth = lastDay.getDate()
-    const startingDay = firstDay.getDay()
-
+    const firstDay = new Date(year, month, 1).getDay()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
     const days: (Date | null)[] = []
-    for (let i = 0; i < startingDay; i++) {
-      days.push(null)
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i))
-    }
+    for (let i = 0; i < firstDay; i++) days.push(null)
+    for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i))
     return days
   }, [currentDate])
-
-  const isDateAvailable = (date: Date) => {
-    const dayOfWeek = date.getDay()
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    if (date < today) return false
-    return availability.some((a) => a.day_of_week === dayOfWeek && a.is_active)
-  }
 
   const isSlotBooked = (date: Date, time: string) => {
     const dateStr = date.toISOString().split("T")[0]
     return bookedSlots.some((s) => s.date === dateStr && s.time === time)
   }
 
-  const getAvailableSlots = (date: Date) => {
-    const dayOfWeek = date.getDay()
-    const avail = availability.find((a) => a.day_of_week === dayOfWeek && a.is_active)
-    if (!avail) return []
+  const isDateAvailable = (date: Date) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    if (date < today) return false
 
-    const startHour = parseInt(avail.start_time.split(":")[0])
-    const endHour = parseInt(avail.end_time.split(":")[0])
+    const dateStr = date.toISOString().split("T")[0]
+    const override = overrides.find((o) => o.date === dateStr)
+
+    if (override) return !override.is_blocked
+
+    const dayOfWeek = date.getDay()
+    return availability.some((a) => a.day_of_week === dayOfWeek && a.is_active)
+  }
+
+  const getAvailableSlots = (date: Date) => {
+    const dateStr = date.toISOString().split("T")[0]
+    const override = overrides.find((o) => o.date === dateStr)
+
+    let startHour: number
+    let endHour: number
+
+    if (override && !override.is_blocked) {
+      startHour = parseInt(override.start_time.split(":")[0])
+      endHour = parseInt(override.end_time.split(":")[0])
+    } else {
+      const dayOfWeek = date.getDay()
+      const avail = availability.find((a) => a.day_of_week === dayOfWeek && a.is_active)
+      if (!avail) return []
+      startHour = parseInt(avail.start_time.split(":")[0])
+      endHour = parseInt(avail.end_time.split(":")[0])
+    }
 
     return timeSlots.filter((slot) => {
       const hour = parseInt(slot.split(":")[0])
@@ -180,24 +197,20 @@ export default function CalendarPage() {
     try {
       const dateStr = selectedDate!.toISOString().split("T")[0]
 
-      // Save to Supabase
       const { error: supabaseError } = await supabase
         .from("bookings")
-        .insert([
-          {
-            name: bookingForm.name,
-            email: bookingForm.email,
-            phone: bookingForm.phone,
-            date: dateStr,
-            time: selectedTime,
-            lesson_type: lessonTypes.find((t) => t.value === lessonType)?.label,
-            status: "pending",
-          },
-        ])
+        .insert([{
+          name: bookingForm.name,
+          email: bookingForm.email,
+          phone: bookingForm.phone,
+          date: dateStr,
+          time: selectedTime,
+          lesson_type: lessonTypes.find((t) => t.value === lessonType)?.label,
+          status: "pending",
+        }])
 
       if (supabaseError) throw supabaseError
 
-      // Send confirmation emails
       await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -214,7 +227,6 @@ export default function CalendarPage() {
         }),
       })
 
-      // Refresh booked slots
       const { data } = await supabase
         .from("bookings")
         .select("date, time")
@@ -231,10 +243,7 @@ export default function CalendarPage() {
   }
 
   const handleBookingFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBookingForm((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
+    setBookingForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const resetBooking = () => {
@@ -288,23 +297,17 @@ export default function CalendarPage() {
                   <CardContent className="p-4">
                     <div className="grid grid-cols-7 mb-2">
                       {DAYS.map((day) => (
-                        <div
-                          key={day}
-                          className="text-center text-sm font-medium text-warm-taupe py-2"
-                        >
+                        <div key={day} className="text-center text-sm font-medium text-warm-taupe py-2">
                           {day}
                         </div>
                       ))}
                     </div>
                     <div className="grid grid-cols-7 gap-1">
                       {calendarDays.map((date, index) => {
-                        if (!date) {
-                          return <div key={`empty-${index}`} className="p-2" />
-                        }
+                        if (!date) return <div key={`empty-${index}`} className="p-2" />
                         const isAvailable = isDateAvailable(date)
                         const isSelected = selectedDate?.toDateString() === date.toDateString()
                         const isToday = new Date().toDateString() === date.toDateString()
-
                         return (
                           <button
                             key={date.toISOString()}
@@ -312,22 +315,10 @@ export default function CalendarPage() {
                             disabled={!isAvailable}
                             className={`
                               p-2 rounded-lg text-sm font-medium transition-all
-                              ${isAvailable
-                                ? "hover:bg-champagne-gold/20 cursor-pointer"
-                                : "text-gray-300 cursor-not-allowed"
-                              }
-                              ${isSelected
-                                ? "bg-rose-gold text-white hover:bg-rose-gold"
-                                : ""
-                              }
-                              ${isToday && !isSelected
-                                ? "ring-2 ring-champagne-gold"
-                                : ""
-                              }
-                              ${isAvailable && !isSelected
-                                ? "text-espresso"
-                                : ""
-                              }
+                              ${isAvailable ? "hover:bg-champagne-gold/20 cursor-pointer" : "text-gray-300 cursor-not-allowed"}
+                              ${isSelected ? "bg-rose-gold text-white hover:bg-rose-gold" : ""}
+                              ${isToday && !isSelected ? "ring-2 ring-champagne-gold" : ""}
+                              ${isAvailable && !isSelected ? "text-espresso" : ""}
                             `}
                           >
                             {date.getDate()}
@@ -344,24 +335,17 @@ export default function CalendarPage() {
                 <Card className="border-blush-pink/50 sticky top-24">
                   <CardHeader className="border-b border-blush-pink/30">
                     <CardTitle className="font-serif text-xl text-espresso">
-                      {selectedDate ? (
-                        selectedDate.toLocaleDateString("en-US", {
-                          weekday: "long",
-                          month: "long",
-                          day: "numeric",
-                        })
-                      ) : (
-                        "Select a Date"
-                      )}
+                      {selectedDate
+                        ? selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+                        : "Select a Date"
+                      }
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-4">
                     {selectedDate ? (
                       <>
                         <div className="mb-4">
-                          <Label className="text-espresso mb-2 block">
-                            Lesson Duration
-                          </Label>
+                          <Label className="text-espresso mb-2 block">Lesson Duration</Label>
                           <Select value={lessonType} onValueChange={setLessonType}>
                             <SelectTrigger className="border-blush-pink">
                               <SelectValue />
@@ -375,10 +359,7 @@ export default function CalendarPage() {
                             </SelectContent>
                           </Select>
                         </div>
-
-                        <Label className="text-espresso mb-2 block">
-                          Available Times
-                        </Label>
+                        <Label className="text-espresso mb-2 block">Available Times</Label>
                         <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
                           {availableSlots.length > 0 ? (
                             availableSlots.map((time) => (
@@ -387,10 +368,7 @@ export default function CalendarPage() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleTimeClick(time)}
-                                className={`
-                                  border-blush-pink text-espresso hover:bg-rose-gold hover:text-white hover:border-rose-gold
-                                  ${selectedTime === time ? "bg-rose-gold text-white border-rose-gold" : ""}
-                                `}
+                                className={`border-blush-pink text-espresso hover:bg-rose-gold hover:text-white hover:border-rose-gold ${selectedTime === time ? "bg-rose-gold text-white border-rose-gold" : ""}`}
                               >
                                 <Clock className="w-3 h-3 mr-1" />
                                 {time}
@@ -406,9 +384,7 @@ export default function CalendarPage() {
                     ) : (
                       <div className="text-center py-8">
                         <CalendarIcon className="w-12 h-12 text-blush-pink mx-auto mb-3" />
-                        <p className="text-warm-taupe">
-                          Click on an available date to see time slots.
-                        </p>
+                        <p className="text-warm-taupe">Click on an available date to see time slots.</p>
                       </div>
                     )}
                   </CardContent>
@@ -442,18 +418,13 @@ export default function CalendarPage() {
 
         <section className="py-16 bg-blush-pink/20">
           <div className="container mx-auto px-4 text-center">
-            <h3 className="font-serif text-2xl text-espresso mb-4">
-              Booking Information
-            </h3>
+            <h3 className="font-serif text-2xl text-espresso mb-4">Booking Information</h3>
             <p className="text-warm-taupe max-w-2xl mx-auto">
-              Lessons can be booked up to 4 weeks in advance. If you need to
-              reschedule, please give at least 24 hours notice. For your first
-              lesson, please arrive 10 minutes early.
+              Lessons can be booked up to 4 weeks in advance. If you need to reschedule, please give at least 24 hours notice. For your first lesson, please arrive 10 minutes early.
             </p>
           </div>
         </section>
 
-        {/* Booking Dialog */}
         <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
           <DialogContent className="sm:max-w-md">
             {isBooked ? (
@@ -464,11 +435,7 @@ export default function CalendarPage() {
                 </DialogTitle>
                 <DialogDescription className="text-warm-taupe mb-4">
                   Your lesson has been scheduled for{" "}
-                  {selectedDate?.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}{" "}
+                  {selectedDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{" "}
                   at {selectedTime}.
                 </DialogDescription>
                 <p className="text-sm text-warm-taupe mb-2">
@@ -477,10 +444,7 @@ export default function CalendarPage() {
                 <p className="text-sm font-medium text-rose-gold mb-6">
                   Please submit payment within 24 hours to secure your spot.
                 </p>
-                <Button
-                  onClick={resetBooking}
-                  className="bg-rose-gold hover:bg-rose-gold/90 text-white"
-                >
+                <Button onClick={resetBooking} className="bg-rose-gold hover:bg-rose-gold/90 text-white">
                   Done
                 </Button>
               </div>
@@ -491,22 +455,15 @@ export default function CalendarPage() {
                     Complete Your Booking
                   </DialogTitle>
                   <DialogDescription>
-                    {selectedDate?.toLocaleDateString("en-US", {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}{" "}
-                    at {selectedTime} —{" "}
-                    {lessonTypes.find((t) => t.value === lessonType)?.label}
+                    {selectedDate?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}{" "}
+                    at {selectedTime} — {lessonTypes.find((t) => t.value === lessonType)?.label}
                   </DialogDescription>
                 </DialogHeader>
-
                 {error && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                     {error}
                   </div>
                 )}
-
                 <form onSubmit={handleBookingSubmit} className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label htmlFor="booking-name">Full Name *</Label>
