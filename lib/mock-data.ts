@@ -170,7 +170,7 @@ export const mockServices = [
     title: "Youth Vocal Program",
     description:
       "Age-appropriate lessons designed to develop young voices while building confidence and a lifelong love of music.",
-    duration: "30 or 45 minutes",
+    duration: "30 minutes",
     forWho: ["Children Ages 5-12"],
     features: [
       "Fun, engaging lessons",
@@ -185,7 +185,7 @@ export const mockServices = [
     title: "Teen Vocal Training",
     description:
       "Specialized training for teenagers navigating voice changes while preparing for auditions, competitions, or personal growth.",
-    duration: "45 or 60 minutes",
+    duration: "45 minutes",
     forWho: ["Teens Ages 13-18"],
     features: [
       "Voice change guidance",
@@ -200,7 +200,7 @@ export const mockServices = [
     title: "Adult Voice Development",
     description:
       "Whether you're a complete beginner or returning to singing, develop your voice in a supportive, judgment-free environment.",
-    duration: "45 or 60 minutes",
+    duration: "60 minutes",
     forWho: ["Adults All Levels"],
     features: [
       "No experience needed",
@@ -215,7 +215,7 @@ export const mockServices = [
     title: "Professional Coaching",
     description:
       "Advanced training for working singers, performers, and recording artists seeking to refine their technique and artistry.",
-    duration: "60 minutes",
+    duration: "90 minutes",
     forWho: ["Professional Singers"],
     features: [
       "Advanced technique",
