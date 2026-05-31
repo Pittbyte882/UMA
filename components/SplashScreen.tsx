@@ -4,28 +4,46 @@ import { useEffect, useState, useRef } from "react"
 
 export function SplashScreen() {
   const [mounted, setMounted] = useState(false)
+  const [started, setStarted] = useState(false)
   const [fadeOut, setFadeOut] = useState(false)
   const [done, setDone] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
 
-    // Auto play the video
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {})
+  useEffect(() => {
+    if (!started) return
+
+    if (videoRef.current) videoRef.current.play().catch(() => {})
+    if (audioRef.current) {
+      audioRef.current.volume = 1
+      audioRef.current.play().catch(() => {})
     }
 
-    // Start fade out after 5 seconds
-    const t1 = setTimeout(() => setFadeOut(true), 5000)
-    // Remove completely after fade
+    const t1 = setTimeout(() => {
+      setFadeOut(true)
+      if (audioRef.current) {
+        const fadeAudio = setInterval(() => {
+          if (audioRef.current && audioRef.current.volume > 0.05) {
+            audioRef.current.volume -= 0.05
+          } else {
+            clearInterval(fadeAudio)
+            if (audioRef.current) audioRef.current.pause()
+          }
+        }, 60)
+      }
+    }, 5000)
+
     const t2 = setTimeout(() => setDone(true), 6200)
 
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
     }
-  }, [])
+  }, [started])
 
   if (!mounted || done) return null
 
@@ -51,6 +69,48 @@ export function SplashScreen() {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          background: #000;
+        }
+        .splash-tap {
+          position: absolute;
+          inset: 0;
+          z-index: 10;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          background: rgba(0,0,0,0.5);
+        }
+        .splash-tap-ring {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          border: 2px solid #D6B98C;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+          animation: pulse 2s ease-in-out infinite;
+        }
+        .splash-tap-triangle {
+          width: 0;
+          height: 0;
+          border-top: 14px solid transparent;
+          border-bottom: 14px solid transparent;
+          border-left: 22px solid #D6B98C;
+          margin-left: 6px;
+        }
+        .splash-tap-text {
+          font-family: Georgia, serif;
+          font-size: 13px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: #D6B98C;
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.08); opacity: 0.8; }
         }
       `}</style>
 
@@ -59,12 +119,24 @@ export function SplashScreen() {
           ref={videoRef}
           className="splash-video"
           src="/videos/splash.mov"
-          autoPlay
-          muted
           playsInline
           loop={false}
           onEnded={() => setFadeOut(true)}
         />
+        <audio
+          ref={audioRef}
+          src="/videos/uma.mp3"
+          preload="auto"
+        />
+
+        {!started && (
+          <div className="splash-tap" onClick={() => setStarted(true)}>
+            <div className="splash-tap-ring">
+              <div className="splash-tap-triangle" />
+            </div>
+            <p className="splash-tap-text">Tap to Experience</p>
+          </div>
+        )}
       </div>
     </>
   )
