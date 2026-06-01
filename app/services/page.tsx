@@ -85,7 +85,7 @@ export default function ServicesPage() {
                           </span>
                           <span className="flex items-center gap-2">
                             <Users className="w-4 h-4 text-rose-gold" />
-                            Private Instruction
+                            {service.id === "5" ? "Group Instruction" : "Private Instruction"}
                           </span>
                         </div>
                         <div className="mb-8">
