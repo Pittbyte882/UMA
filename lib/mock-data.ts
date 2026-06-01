@@ -211,20 +211,20 @@ export const mockServices = [
     image: "/images/services/adult-development.png",
   },
   {
-    id: "5",
-    title: "Professional Coaching",
-    description:
-      "Advanced training for working singers, performers, and recording artists seeking to refine their technique and artistry.",
-    duration: "90 minutes",
-    forWho: ["Professional Singers"],
-    features: [
-      "Advanced technique",
-      "Recording preparation",
-      "Vocal health",
-      "Career guidance",
-    ],
-    image: "/images/gospel.png",
-  },
+  id: "5",
+  title: "UMA Gospel Choir & Vocal Ensemble",
+  description:
+    "Join our vibrant gospel choir community and experience the power of singing together. Open to all current UMA students, this add-on program combines weekly ensemble rehearsals with harmony training, stage presence coaching, and quarterly showcase performances. Sing Together. Shine Together.",
+  duration: "90 minutes",
+  forWho: ["All Students", "Add-On"],
+  features: [
+    "Weekly ensemble rehearsals",
+    "Vocal harmony training",
+    "Stage presence coaching",
+    "Quarterly showcase performances",
+  ],
+  image: "/images/gospel.png",
+},
 ]
 
 export const mockAvailability = [
