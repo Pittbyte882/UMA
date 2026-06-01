@@ -14,14 +14,31 @@ export function SplashScreen() {
     setMounted(true)
   }, [])
 
-  const handleStart = () => {
+  const handleStart = async () => {
+    // iOS requires audio to be resumed from an AudioContext
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext
+      if (AudioContext) {
+        const audioCtx = new AudioContext()
+        await audioCtx.resume()
+      }
+    } catch {}
+
+    // Play audio directly in click handler
     if (audioRef.current) {
       audioRef.current.volume = 1
-      audioRef.current.play().catch(() => {})
+      audioRef.current.muted = false
+      const playPromise = audioRef.current.play()
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {})
+      }
     }
+
+    // Play video
     if (videoRef.current) {
       videoRef.current.play().catch(() => {})
     }
+
     setStarted(true)
   }
 
@@ -132,6 +149,7 @@ export function SplashScreen() {
           ref={audioRef}
           src="/videos/uma.mp3"
           preload="auto"
+          playsInline
         />
 
         {!started && (
