@@ -14,14 +14,19 @@ export function SplashScreen() {
     setMounted(true)
   }, [])
 
-  useEffect(() => {
-    if (!started) return
-
-    if (videoRef.current) videoRef.current.play().catch(() => {})
+  const handleStart = () => {
     if (audioRef.current) {
       audioRef.current.volume = 1
       audioRef.current.play().catch(() => {})
     }
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {})
+    }
+    setStarted(true)
+  }
+
+  useEffect(() => {
+    if (!started) return
 
     const t1 = setTimeout(() => {
       setFadeOut(true)
@@ -130,7 +135,7 @@ export function SplashScreen() {
         />
 
         {!started && (
-          <div className="splash-tap" onClick={() => setStarted(true)}>
+          <div className="splash-tap" onClick={handleStart}>
             <div className="splash-tap-ring">
               <div className="splash-tap-triangle" />
             </div>
