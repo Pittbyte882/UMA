@@ -71,7 +71,7 @@ export default function AboutPage() {
                     Tyler, the Creator, Deborah Cox, Sean Kingston, and Duran Duran</strong>, among others.
                   </p>
                   <p>
-                    In addition to performing, Samantha is also a published songwriter with
+                    In addition to performing, Samantha is also a published songwriter with{" "}
                     <strong>Universal Music Publishing Group</strong>, where she has developed music for
                     major artists and projects across multiple genres.
                   </p>
