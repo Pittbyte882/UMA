@@ -430,14 +430,12 @@ export default function AdminSubmissionsPage() {
               {/* Reply and Delete */}
               <div className="flex gap-2 pt-2">
                 <Button
-                  asChild
                   variant="outline"
                   className="flex-1 border-champagne-gold text-espresso hover:bg-champagne-gold/10 gap-2"
+                  onClick={() => window.open(`https://mail.google.com/mail/?view=cm&to=${selectedItem.email}&su=Re: Your inquiry to Ultimate Music Academy`, '_blank')}
                 >
-                  <a href={`mailto:${selectedItem.email}`}>
-                    <Mail className="w-4 h-4" />
-                    Reply
-                  </a>
+                  <Mail className="w-4 h-4" />
+                  Reply
                 </Button>
                 <Button
                   variant="outline"
