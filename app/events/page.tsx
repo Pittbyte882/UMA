@@ -231,7 +231,7 @@ export default async function EventsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 "/images/IMG_0054.jpeg",
-                "/images/IMG_0055.jpeg",
+                "/images/IMG_0059.jpeg",
                 "/images/IMG_0056.jpeg",
               ].map((src, index) => (
                 <div

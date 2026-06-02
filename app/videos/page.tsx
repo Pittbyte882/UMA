@@ -6,15 +6,15 @@ import { WavyDivider } from "@/components/layout/wavy-divider"
 const videos = [
   {
     id: "qBQaKDMjfCA",
-    title: "Samantha Nelson — Performance",
+    title: "Samantha Nelson — Live Studio Performance",
   },
   {
     id: "KfdEVsk7yn8",
-    title: "Samantha Nelson — Vocal Showcase",
+    title: "Samantha Nelson — Vocal Arrangement",
   },
   {
     id: "KZJYEeRavQo",
-    title: "Samantha Nelson — Live Performance",
+    title: "Samantha Nelson — Music Video",
   },
 ]
 
