@@ -142,7 +142,7 @@ export default function ServicesPage() {
         <section className="py-16 bg-blush-pink/30">
           <div className="container mx-auto px-4 text-center">
             <h3 className="font-serif text-2xl text-espresso mb-4">
-              Flexible Pricing Options
+               Pricing Options
             </h3>
             <p className="text-warm-taupe max-w-2xl mx-auto mb-6">
               I offer various lesson packages to accommodate different schedules
