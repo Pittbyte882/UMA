@@ -22,9 +22,9 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { name: "Facebook", href: "#", icon: Facebook },
-  { name: "Instagram", href: "#", icon: Instagram },
-  { name: "YouTube", href: "#", icon: Youtube },
+  { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61590605666047&mibextid=wwXIfr", icon: Facebook },
+  { name: "Instagram", href: "https://www.instagram.com/ultimatemusicacademy?utm_source=qr", icon: Instagram },
+  { name: "YouTube", href: "https://youtube.com/@ultimatemusicacademy?si=HnnTxm1u8an0C42C", icon: Youtube },
 ]
 
 export function Footer() {
@@ -57,6 +57,8 @@ export function Footer() {
                 <a
                   key={social.name}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-pearl-white/60 hover:text-champagne-gold transition-colors"
                   aria-label={social.name}
                 >
