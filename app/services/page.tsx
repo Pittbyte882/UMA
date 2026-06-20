@@ -109,7 +109,7 @@ export default function ServicesPage() {
                             asChild
                             className="bg-rose-gold hover:bg-rose-gold/90 text-white"
                           >
-                            <Link href="/consultation">Book Consultation</Link>
+                            <Link href="/consultation">Book a Free Consultation</Link>
                           </Button>
                           <Button
                             asChild
@@ -118,6 +118,9 @@ export default function ServicesPage() {
                           >
                             <Link href="/calendar">View Availability</Link>
                           </Button>
+                          <p className="text-warm-taupe text-sm mt-4">
+                            Starting from $200/month
+                          </p>
                         </div>
                       </CardContent>
                     </div>
@@ -155,6 +158,9 @@ export default function ServicesPage() {
             >
               <Link href="/consultation">Discuss Pricing Options</Link>
             </Button>
+            <p className="text-warm-taupe text-sm mt-4">
+          Starting from $200/month
+        </p>
           </div>
         </section>
 
