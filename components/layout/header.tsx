@@ -60,7 +60,7 @@ export function Header() {
               asChild
               className="btn-rose-gold rounded-md font-medium px-6 py-5 uppercase tracking-luxury text-xs"
             >
-              <Link href="/consultation">Book a Consultation</Link>
+              <Link href="/consultation">Book a Free Consultation</Link>
             </Button>
           </div>
 
@@ -104,7 +104,7 @@ export function Header() {
                   className="btn-rose-gold rounded-md font-medium px-6 py-5 uppercase tracking-luxury text-xs mt-4"
                 >
                   <Link href="/consultation" onClick={() => setIsOpen(false)}>
-                    Book a Consultation
+                    Book a Free Consultation
                   </Link>
                 </Button>
               </div>

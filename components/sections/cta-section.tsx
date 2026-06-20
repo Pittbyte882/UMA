@@ -16,7 +16,6 @@ export function CTASection({ variant = "primary" }: CTASectionProps) {
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-espresso mb-6 max-w-3xl mx-auto">
             Ready to Discover Your Voice?
           </h2>
-          {/* Diamond divider */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <span className="w-2 h-2 bg-champagne-gold rotate-45"></span>
           </div>
@@ -41,6 +40,9 @@ export function CTASection({ variant = "primary" }: CTASectionProps) {
               <Link href="/contact">Contact Us</Link>
             </Button>
           </div>
+          <p className="text-warm-taupe text-sm mt-4">
+            Starting from $200/month
+          </p>
         </div>
       </section>
     )
@@ -48,7 +50,6 @@ export function CTASection({ variant = "primary" }: CTASectionProps) {
 
   return (
     <section className="py-20 md:py-28 cta-gradient relative overflow-hidden sparkle-overlay">
-      {/* Decorative piano overlay could be added via background image */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-rose-gold/20 to-transparent" />
       </div>
@@ -57,7 +58,6 @@ export function CTASection({ variant = "primary" }: CTASectionProps) {
         <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-espresso mb-4 max-w-3xl mx-auto">
           Your Voice Matters Here.
         </h2>
-        {/* Diamond divider */}
         <div className="flex items-center justify-center gap-2 mb-6">
           <span className="w-2 h-2 bg-champagne-gold rotate-45"></span>
         </div>
@@ -71,6 +71,9 @@ export function CTASection({ variant = "primary" }: CTASectionProps) {
         >
           <Link href="/consultation">Schedule Your Free Consultation</Link>
         </Button>
+        <p className="text-warm-taupe text-sm mt-4">
+          Starting from $200/month
+        </p>
       </div>
     </section>
   )
