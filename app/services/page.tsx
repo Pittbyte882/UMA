@@ -117,11 +117,11 @@ export default function ServicesPage() {
                             className="border-espresso text-espresso hover:bg-[#E8CFCF]  hover:text-pearl-white"
                           >
                             <Link href="/calendar">View Availability</Link>
-                          </Button>
-                          <p className="text-warm-taupe text-sm mt-4">
+                          </Button> 
+                        </div>
+                        <p className="text-warm-taupe text-sm mt-4 text-center">
                             Starting from $200/month
                           </p>
-                        </div>
                       </CardContent>
                     </div>
                   </Card>
