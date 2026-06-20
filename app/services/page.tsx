@@ -120,7 +120,7 @@ export default function ServicesPage() {
                             <Link href="/calendar">View Availability</Link>
                           </Button>
                         </div>
-                        <p className="text-warm-taupe text-sm mt-4 ml-8">
+                        <p className="text-warm-taupe text-sm mt-4 ml-20">
                           Starting from $200/month
                         </p>
                       </div>
