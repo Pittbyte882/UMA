@@ -104,6 +104,7 @@ export default function ServicesPage() {
                             ))}
                           </ul>
                         </div>
+                        <div className="inline-flex flex-col gap-3">
                         <div className="flex flex-col sm:flex-row gap-3">
                           <Button
                             asChild
@@ -117,11 +118,12 @@ export default function ServicesPage() {
                             className="border-espresso text-espresso hover:bg-[#E8CFCF]  hover:text-pearl-white"
                           >
                             <Link href="/calendar">View Availability</Link>
-                          </Button> 
+                          </Button>
                         </div>
-                        <p className="text-warm-taupe text-sm mt-4">
-                            Starting from $200/month
-                          </p>
+                        <p className="text-warm-taupe text-sm text-center">
+                          Starting from $200/month
+                        </p>
+                      </div>
                       </CardContent>
                     </div>
                   </Card>
