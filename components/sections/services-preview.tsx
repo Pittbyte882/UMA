@@ -86,6 +86,9 @@ export function ServicesPreview() {
           >
             <Link href="/services">View All Programs</Link>
           </Button>
+          <p className="text-warm-taupe text-sm mt-4">
+          Starting from $200/month
+        </p>
         </div>
       </div>
     </section>
