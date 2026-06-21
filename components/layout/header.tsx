@@ -43,7 +43,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-2 text-xs font-medium uppercase tracking-luxury transition-colors ${
+                className={`whitespace-nowrap px-3 py-2 text-xs font-medium uppercase tracking-luxury transition-colors ${
                   index === 0
                     ? "text-rose-gold"
                     : "text-espresso hover:text-rose-gold"
