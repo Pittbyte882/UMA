@@ -17,7 +17,11 @@ const blogImages: Record<string, string> = {
 }
 
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString("en-US", {
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    return ""
+  }
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -47,7 +51,7 @@ export default function BlogPage() {
       excerpt:
         "Nervous about your upcoming performance? Here are tips to help you prepare mentally and physically for the stage.",
       content: "",
-      image_url: "/images/events/recital.jpg",
+      image_url: "/images/hero-bg.jpg",
       published: true,
       created_at: "2024-01-05T10:00:00Z",
       updated_at: "2024-01-05T10:00:00Z",

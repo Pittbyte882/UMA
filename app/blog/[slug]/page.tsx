@@ -145,7 +145,11 @@ const blogContent: Record<string, string> = {
 }
 
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString("en-US", {
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    return ""
+  }
+  return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
