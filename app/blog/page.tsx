@@ -39,7 +39,7 @@ export default function BlogPage() {
       excerpt:
         "Learn how proper breathing technique forms the foundation of powerful, sustainable singing and how to develop it.",
       content: "",
-      image_url: "/images/hero-bg.jpg",
+      image_url: "https://images.pexels.com/photos/6670743/pexels-photo-6670743.jpeg?cs=srgb&dl=pexels-tima-miroshnichenko-6670743.jpg&fm=jpg",
       published: true,
       created_at: "2024-01-20T10:00:00Z",
       updated_at: "2024-01-20T10:00:00Z",
@@ -51,7 +51,7 @@ export default function BlogPage() {
       excerpt:
         "Nervous about your upcoming performance? Here are tips to help you prepare mentally and physically for the stage.",
       content: "",
-      image_url: "/images/hero-bg.jpg",
+      image_url: "https://images.pexels.com/photos/236149/pexels-photo-236149.jpeg?cs=srgb&dl=pexels-pixabay-236149.jpg&fm=jpg",
       published: true,
       created_at: "2024-01-05T10:00:00Z",
       updated_at: "2024-01-05T10:00:00Z",
